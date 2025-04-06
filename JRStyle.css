@@ -1,0 +1,137 @@
+/* DATEI: infosite.css */
+/* Zeilen wie diese, die mit Schraegstrich und Stern */
+/* beginnen und mit Stern und Schraegstrich enden, sind */
+/* Kommentarzeilen. */
+/* Unterhalb jedes Befehls steht eine Kurzerklaerung */
+
+body { background-color:#FFFFFF;font-family:Arial,sans-serif;font-size:10pt;}
+/* Hintergrundfarbe ist weiss */
+.blau10fett {font-size: 10pt; font-weight: bold; color: #333399; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+.blau12fett {font-size: 12pt; font-weight: bold; color: #333399; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+.blau14fett {font-size: 14pt; font-weight: bold; color: #333399; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+.blau16fett {font-size: 16pt; font-weight: bold; color: #333399; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+.blau18fett {font-size: 18pt; font-weight: bold; color: #333399; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+.blau22fett {font-size: 22pt; font-weight: bold; color: #333399; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+
+.gelb10fett {font-size: 10pt; font-weight: bold; color: #FFCC00; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+
+.rot8       {font-size:  8pt; font-weight: normal; color: #CC0000; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+.rot10      {font-size: 10pt; font-weight: normal; color: #CC0000; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+.rot10fett  {font-size: 10pt; font-weight: bold; color: #CC0000; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+.rot12fett  {font-size: 12pt; font-weight: bold; color: #CC0000; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+.rot18fett  {font-size: 18pt; font-weight: bold; color: #CC0000; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+.rot22fett  {font-size: 22pt; font-weight: bold; color: #CC0000; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal}
+
+
+.schwarz8   {font-size: 8pt; font-weight: normal; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal; color: #000000}
+.schwarz8fett { font-size: 8pt; font-weight: bolder; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal; color: #000000}
+.schwarz10  {font-size: 10pt; font-weight: normal; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal; color: #000000}
+.schwarz10kursiv { font-size: 10pt; font-style: italic ; font-family: Arial, Helvetica, sans-serif; font-weight: normal; line-height: normal; font-variant: normal; color: #000000}
+.schwarz10fett { font-size: 10pt; font-weight: bold; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal; color: #000000}
+.schwarz12fett { font-size: 12pt; font-weight: bold; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal; color: #000000}
+
+.weiss10 { font-size: 10pt; font-weight: normal; ; font-family: Arial, Helvetica, sans-serif; font-style: normal; line-height: normal; font-variant: normal; color: #FFFFFF}
+
+p,h1,h2,h3,h4,h5,ul,ol,li,ul,div,tr,dl,dt,dd,td,th,address,blockquote,nobr,b,i
+ { font-family:Arial,sans-serif; }
+/* font-family = Schriftart fuer Textelemente */
+/* Arial,sans-serif = Arial und serifenlose Schrift, Wert aenderbar */
+
+p,ul,ol,li,ul,div,td,th,dl,dt,dd,address,nobr,b,i { font-size:10pt; }
+/* normaler Text */
+/* font-size = Schriftgroesse */
+/* 10pt = 10 Punkt, Wert aenderbar */
+
+h1 { font-size:18pt; }
+/* font-size = Schriftgroesse */
+/* 18pt = 18 Punkt, Wert aenderbar */
+
+h2 { font-size:16pt; }
+/* Seitenueberschriften */
+/* font-size = Schriftgroesse */
+/* 16pt = 16 Punkt, Wert aenderbar */
+
+h3 { font-size:14pt; }
+/* Zwischenueberschriften wie 'Beispiel', 'Erlaeuterung' */
+/* font-size = Schriftgroesse */
+/* 14pt = 14 Punkt, Wert aenderbar */
+
+h4 { font-size:12pt; }
+/* Zwischenueberschriften an manchen Stellen */
+/* font-size = Schriftgroesse */
+/* 12pt = 12 Punkt, Wert aenderbar */
+
+h5 { font-family:Arial,sans-serif; font-size:8pt; font-weight:lighter; margin-top:0pt; margin-bottom:0pt; }
+/* Kleiner Text fuer die grauen Bereiche an manchen Stellen */
+/* font-size = Schriftgroesse */
+/* 8pt = 8 Punkt, Wert aenderbar */
+
+h6 { font-family:Arial,sans-serif; font-size:10pt; color:#FFFFFF; text-align:center; margin-top:5pt; margin-bottom:0pt; }
+/* Weisse Zwischenueberschriften in der Tabelle */
+/* font-size = Schriftgroesse */
+/* 10pt = 10 Punkt, Wert aenderbar */
+
+
+pre { font-family:Courier New,Courier; font-size:10pt; color:#0000C0; }
+/* Quelltext-Beispiele */
+/* font-family = Schriftart */
+/* Courier New,Courier = Schriftarten, Wert aenderbar */
+/* font-size = Schriftgroesse */
+/* 10pt = 10 Punkt, Wert aenderbar */
+/* color = Farbe */
+/* #0000C0 = blau, Wert aenderbar */
+
+tt { font-family:Courier New,Courier; font-size:10pt; color:#0000C0; }
+/* Quelltext-Befehle */
+/* font-family = Schriftart */
+/* Courier New,Courier = Schriftarten, Wert aenderbar */
+/* font-size = Schriftgroesse */
+/* 10pt = 10 Punkt, Wert aenderbar */
+/* color = Farbe */
+/* #0000C0 = blau, Wert aenderbar */
+
+a:link { color:#333399; text-decoration:underline;}
+a:visited { color:#333399; text-decoration:underline; }
+a:active { color:#333399; text-decoration:underline; }
+/* a:link = Verweise zu noch nicht besuchten Seiten */
+/* a:visited = Verweise zu bereits besuchten Seiten */
+/* a:active = Verweise, die gerade angeklickt werden */
+/* color = Farbe */
+/* text-decoration = Tesxtstil */
+/* underline = unterstrichen, Default-Wert, Wert aenderbar */
+/* none = nicht unterstrichen, Wert aenderbar */
+
+a.tooltip , a.tooltip:visited {
+position: relative;
+z-index: 20; 
+color: #000;
+text-decoration: none;
+}
+
+a.tooltip:hover {
+z-index: 25; 
+background:transparent;
+position:relative;
+}
+
+a.tooltip span { /* Span Element nicht anzeigen */
+display: none;
+}
+
+a.tooltip:hover span { /* Span Element nur angezeigt beim Ueberfahren mit der Maus */
+background: #ffffd0; /* Hintergrundbild */
+position: absolute;
+top: 1.8em; /* abstand von oben */
+left: 1.8em; /* abstand von links */
+width: 16em; /* breite */
+padding: 3px 7px; /* Innenabstand */
+border: 1px solid #000; /* Rahmenfarbe */
+color: #000000; /* Textfarbe */
+text-align: left; /* Textausrichtung */
+display: block; /* macht aus dem Inlineelement ein Blockelement */
+}
+
+
+
+
+

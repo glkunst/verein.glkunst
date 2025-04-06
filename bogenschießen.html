@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bogenschießen - Verein für ganzheitliche Lebenskunst</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .header {
+            background: linear-gradient(to bottom, #4a704a, #8ba888);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+        .content {
+            padding: 40px;
+            text-align: center;
+            max-width: 1000px; /* Widened to fit both side by side */
+            margin: 0 auto;
+        }
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0px; /* Space between GIF and flyer */
+            flex-wrap: wrap; /* Wraps to stack on small screens */
+            margin: 20px 0;
+        }
+        .content img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #4a704a;
+        }
+        .gif {
+            width: 400px; /* Adjust as needed for your GIF */
+        }
+        .flyer {
+            width: 400px; /* Adjust as needed for your flyer */
+        }
+        .back {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 20px;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back">← Zurück</a>
+    <div class="header">
+        <h1>Bogenschießen</h1>
+    </div>
+    <div class="content">
+        <p>Fokus und Freude in der Natur – unser Bogenschießen-Angebot bringt dich näher an dich selbst.</p>
+        <div class="image-container">
+            <img src="assets/bow.gif" alt="Bogenschießen in Aktion" class="gif">
+            <img src="assets/bogen_kurs.png" alt="Bogenschießen Flyer" class="flyer">
+        </div>
+        <p>Schau dir unser Bogenschießen-Programm an – mehr Inhalte kommen bald!</p>
+    </div>
+</body>
+</html>

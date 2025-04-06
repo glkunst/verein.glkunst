@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Berechnung eines Teslatransformators</title>
+    <meta name="author" content="Jens Raacke">
+    <meta name="keywords" lang="de" content="Teslatrafo, Teslatransformator, Theorie, Hochspannung, Jens Raacke">
+    <meta name="robots" content="follow">
+    <link rel="stylesheet" href="JRStyle.css" type="text/css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background:  #2e4a2e;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: linear-gradient(to bottom, #4a704a, #8ba888);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .download {
+    text-align: center;
+    margin-top: 20px;
+}
+.download a {
+    color: #ffffff; /* White as requested */
+    text-decoration: none;
+}
+.download a:hover {
+    color: #8ba888; /* Matches hover effect */
+}
+        h1, h3 {
+            text-align: center;
+            color: #ffffff;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ffffff;
+        }
+        th {
+            background: #4a704a;
+        }
+        input[type="text"], select, textarea {
+            background: #ffffff;
+            border: 1px solid #4a704a;
+            padding: 5px;
+            border-radius: 5px;
+            color: #333;
+        }
+        input[type="button"] {
+            background: #4a704a;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        input[type="button"]:hover {
+            background: #8ba888;
+        }
+        .tooltip {
+            color: #ffffff;
+            text-decoration: none;
+            position: relative;
+        }
+        .tooltip span {
+            display: none;
+            position: absolute;
+            background: #333;
+            color: #ffffff;
+            padding: 5px;
+            border-radius: 5px;
+            z-index: 10;
+            width: 200px;
+            top: 100%;
+            left: 0;
+        }
+        .tooltip:hover span {
+            display: block;
+        }
+.back {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 20px;
+    color: #ffffff !important; /* Force white color */
+    text-decoration: none;
+    z-index: 2;
+    opacity: 1; /* Changed from 100 to 1 (CSS opacity is 0-1) */
+    transition: opacity 0.5s ease;
+}
+.back:hover {
+    color: #8ba888 !important; /* Ensure hover stays consistent */
+}
+.back.visible {
+    opacity: 1; /* Same fix: 100 -> 1 */
+}
+    </style>
+    <script type="text/javascript">
+        var MU = 4 * 3.1415926 * 1.0E-7;
+        var NB = 50;
+        var ln10 = Math.log(10);
+        var ln10x = ln10 / 10;
+        var PRadius1, PRadius2, PHeight1, PHeight2, PWirad, PTurns;
+        var SRadius1, SRadius2, SHeight1, SHeight2, SWirad, STurns;
+        var fensteroffen = 0;
+
+        var grover13 = [
+            0.008297, 0.007810, 0.007371, 0.006974, 0.006611, 0.006278,
+            0.005970, 0.005685, 0.005420, 0.005173, 0.004941, 0.004723,
+            0.004518, 0.004325, 0.004142, 0.003969, 0.003805, 0.003649,
+            0.003500, 0.003359, 0.003224, 0.003095, 0.002971, 0.002853,
+            0.002740, 0.0026317, 0.0025276, 0.0024276, 0.0023315, 0.0022391,
+            0.0021502, 0.0020646, 0.0019821, 0.0019026, 0.0018259, 0.0017519,
+            0.0016805, 0.0016116, 0.0015451, 0.0014808, 0.0014186, 0.0013585,
+            0.0013004, 0.0012443, 0.0011900, 0.0011374, 0.0010865, 0.0010373,
+            0.0009897, 0.0009436, 0.0008990, 0.0008558, 0.0008141, 0.0007736,
+            0.0007345, 0.0006966, 0.0006600, 0.0006246, 0.0005903, 0.0005571,
+            0.0005251, 0.0004941, 0.0004642, 0.0004353, 0.0004074, 0.0003805,
+            0.0003545, 0.0003295, 0.0003054, 0.0002823, 0.00025998, 0.00023859,
+            0.00021806, 0.00019840, 0.00017959, 0.00016162, 0.00014450, 0.00012821,
+            0.00011276, 0.00009815, 0.00008438
+        ];
+
+        var grover14 = [
+            0.079093, 0.077647, 0.076200, 0.074753, 0.073306, 0.071860,
+            0.070413, 0.068966, 0.067520, 0.066073, 0.064626, 0.063180,
+            0.061733, 0.060287, 0.058840, 0.057394, 0.055947, 0.054500,
+            0.053055, 0.051609, 0.050163, 0.048717, 0.047272, 0.045827,
+            0.044382, 0.042938, 0.041494, 0.040051, 0.038608, 0.037167,
+            0.035727, 0.034288, 0.032851, 0.031416, 0.029984, 0.028554,
+            0.027128, 0.025707, 0.024291, 0.022881, 0.021478, 0.020084,
+            0.018700, 0.017329, 0.015972, 0.014632, 0.013311, 0.012013,
+            0.010742, 0.009502, 0.008297
+        ];
+
+        var grover15 = [
+            .39227e-9, .54228e-9, .69229e-9, .85230e-9, .99232e-9, .14234e-8,
+            .29237e-8, .44240e-8, .59244e-8, .74250e-8, .89257e-8, .04265e-7,
+            .19276e-7, .34289e-7, .49306e-7, .64327e-7, .79354e-7, .94388e-7,
+            .09430e-6, .22484e-6, .39551e-6, .54636e-6, .69744e-6, .84879e-6,
+            .00051e-5, .15268e-5, .30542e-5, .45891e-5, .61334e-5, .76899e-5,
+            .92622e-5
+        ];
+
+        /*
+        if (window.location.protocol == "http:") {
+            if (parent.frames.length == 0) {
+                window.location.replace("index.html?" + extract_filename(window.location.href));
+            } else {
+                if (parent.frames[1].location.href != window.location.href) {
+                    window.location.replace("index.html?" + extract_filename(window.location.href));
+                }
+            }
+        }
+        */
+
+        function extract_filename(param) {
+            var i = param.length;
+            while (param.substring(i, i + 1) != "/" && i > 0) i--;
+            if (i > 0) return param.substring(i + 1, param.length);
+            else return "";
+        }
+
+        function CheckZahl(Wert) {
+            var i = 0;
+            var num = "0123456789.,";
+            var dotcount = 0;
+            while (i < Wert.length) {
+                if (Wert.charAt(i) == ".") dotcount++;
+                if (Wert.charAt(i) == ",") dotcount++;
+                if (num.indexOf(Wert.charAt(i)) == -1 || dotcount > 1) {
+                    alert("\"" + Wert + "\" ist keine positive Zahl!");
+                    return false;
+                }
+                i++;
+            }
+            return true;
+        }
+
+        function CheckZahlpm(Wert) {
+            var i = 0;
+            var num = "-0123456789.,";
+            var dotcount = 0;
+            while (i < Wert.length) {
+                if (Wert.charAt(i) == ".") dotcount++;
+                if (Wert.charAt(i) == ",") dotcount++;
+                if (num.indexOf(Wert.charAt(i)) == -1 || dotcount > 1) {
+                    alert("\"" + Wert + "\" ist keine Zahl!");
+                    return false;
+                }
+                i++;
+            }
+            return true;
+        }
+
+        function CheckAngle(Wert) {
+            if (!CheckZahl(Wert)) return false;
+            if (GetVal(Wert) < 0 || GetVal(Wert) > 90) {
+                alert("Nur Winkel zwischen 0 und 90 Grad erlaubt!");
+                return false;
+            }
+            return true;
+        }
+
+        function TrimDot(Wert) {
+            var i = 0;
+            var NeuWert = "";
+            while (i < Wert.length) {
+                c = Wert.charAt(i);
+                if (c == ",") NeuWert = NeuWert + ".";
+                else NeuWert = NeuWert + c;
+                i++;
+            }
+            return NeuWert;
+        }
+
+        function GetVal(Field) {
+            return parseFloat(TrimDot(Field));
+        }
+
+        function Einheitenfaktor(Einheit) {
+            var f = 1;
+            if (Einheit == "m") f = 1;
+            if (Einheit == "m^2") f = 1;
+            if (Einheit == "cm") f = 0.01;
+            if (Einheit == "cm^2") f = 0.0001;
+            if (Einheit == "mm") f = 0.001;
+            if (Einheit == "mm^2") f = 0.000001;
+            if (Einheit == "yd") f = 0.9144;
+            if (Einheit == "yd^2") f = 0.83612736;
+            if (Einheit == "ft") f = 0.3048;
+            if (Einheit == "ft^2") f = 0.09290304;
+            if (Einheit == "in") f = 0.0254;
+            if (Einheit == "in^2") f = 0.00064516;
+            if (Einheit == "mill") f = 0.0000254;
+            if (Einheit == "mill^2") f = 6.4516e-10;
+            if (Einheit == "V") f = 1;
+            if (Einheit == "kV") f = 1000;
+            if (Einheit == "A") f = 1;
+            if (Einheit == "mA") f = 0.001;
+            return f;
+        }
+
+        function AWG_calc(field) {
+            var awg_val = 0;
+            var dia = 0;
+            var expon = 0;
+            awg_val = Math.floor(GetVal(field));
+            expon = (36 - awg_val) / 39;
+            dia = Math.pow(92, expon) * 0.127;
+            return dia;
+        }
+
+        function CheckDataSet(datensatz) {
+            var Wert = -1;
+            var k;
+            var Start;
+            var Ende;
+            if (document.cookie) {
+                Start = document.cookie.indexOf(datensatz + "=");
+                if (Start >= 0) {
+                    k = document.cookie.substring(Start, document.cookie.length);
+                    Ende = k.indexOf("/");
+                    if (Ende > 0) Wert = 1;
+                } else Wert = -2;
+            }
+            return Wert;
+        }
+
+        function ReadValue(datensatz, name) {
+            var Wert = "";
+            var k;
+            var Start;
+            var Ende;
+            var c = new Array(
+                "PDI_U=9/PDI_E=1/PWS_U=3/PWS_E=2/PDW_U=5/PDW_E=2/PP_U=0/PP_E=1/NP=9/alpha=45/SD_U=5/SD_E=1/SWS_U=0.06666/SWS_E=2/SDW_U=0.2/SDW_E=2/SH_U=40/SH_E=1/TSD_U=5/TSD_E=1/TLD_U=15/TLD_E=1/ECP=12.5/TEXT=Minitesla/MPU_U=8/MPU_E=0/MPI_U=80/MPI_E=0/",
+                "PDI_U=40/PDI_E=1/PWS_U=0/PWS_E=2/PDW_U=1/PDW_E=1/PP_U=10/PP_E=1/NP=3/alpha=0/SD_U=20/SD_E=1/SWS_U=0.4/SWS_E=2/SDW_U=0.5/SDW_E=2/SH_U=95/SH_E=1/TSD_U=15/TSD_E=1/TLD_U=40/TLD_E=1/ECP=208/TEXT=Miditesla/MPU_U=7.5/MPU_E=0/MPI_U=500/MPI_E=0/",
+                "PDI_U=75/PDI_E=1/PWS_U=20/PWS_E=2/PDW_U=15/PDW_E=2/PP_U=15/PP_E=1/NP=4/alpha=0/SD_U=40/SD_E=1/SWS_U=0.9/SWS_E=2/SDW_U=0.9/SDW_E=2/SH_U=180/SH_E=1/TSD_U=20/TSD_E=1/TLD_U=100/TLD_E=1/ECP=208/TEXT=Bigtesla/MPU_U=7.5/MPU_E=0/MPI_U=500/MPI_E=0/"
+            );
+            var n = 0;
+            n = datensatz.substring(datensatz.length - 1, datensatz.length);
+            if (n < 4) {
+                if (document.cookie) {
+                    Start = document.cookie.indexOf(datensatz + "=");
+                    k = document.cookie.substring(Start, document.cookie.length);
+                }
+            } else k = c[n - 4];
+            Start = k.indexOf(name + "=");
+            if (Start >= 0) {
+                k = k.substring(Start + name.length + 1, k.length);
+                Ende = k.indexOf("/");
+                Wert = k.substring(0, Ende);
+            } else Wert = 0;
+            return Wert;
+        }
+
+        function SaveVar(name, Wert) {
+            keks = keks + name + "=" + Wert + "/";
+        }
+
+        function ReadData(datensatz) {
+            document.daten.PDI_U.value = ReadValue(datensatz, "PDI_U");
+            document.daten.PDI_E.selectedIndex = ReadValue(datensatz, "PDI_E");
+            document.daten.PWS_U.value = ReadValue(datensatz, "PWS_U");
+            document.daten.PWS_E.selectedIndex = ReadValue(datensatz, "PWS_E");
+            document.daten.PDW_U.value = ReadValue(datensatz, "PDW_U");
+            document.daten.PDW_E.selectedIndex = ReadValue(datensatz, "PDW_E");
+            document.daten.PP_U.value = ReadValue(datensatz, "PP_U");
+            document.daten.PP_E.selectedIndex = ReadValue(datensatz, "PP_E");
+            document.daten.NP.value = ReadValue(datensatz, "NP");
+            document.daten.alpha.value = ReadValue(datensatz, "alpha");
+            document.daten.SD_U.value = ReadValue(datensatz, "SD_U");
+            document.daten.SD_E.selectedIndex = ReadValue(datensatz, "SD_E");
+            document.daten.SWS_U.value = ReadValue(datensatz, "SWS_U");
+            document.daten.SWS_E.selectedIndex = ReadValue(datensatz, "SWS_E");
+            document.daten.SDW_U.value = ReadValue(datensatz, "SDW_U");
+            document.daten.SDW_E.selectedIndex = ReadValue(datensatz, "SDW_E");
+            document.daten.SH_U.value = ReadValue(datensatz, "SH_U");
+            document.daten.SH_E.selectedIndex = ReadValue(datensatz, "SH_E");
+            document.daten.TSD_U.value = ReadValue(datensatz, "TSD_U");
+            document.daten.TSD_E.selectedIndex = ReadValue(datensatz, "TSD_E");
+            document.daten.TLD_U.value = ReadValue(datensatz, "TLD_U");
+            document.daten.TLD_E.selectedIndex = ReadValue(datensatz, "TLD_E");
+            document.daten.ECP.value = ReadValue(datensatz, "ECP");
+            document.daten.MPU_U.value = ReadValue(datensatz, "MPU_U");
+            document.daten.MPU_E.selectedIndex = ReadValue(datensatz, "MPU_E");
+            document.daten.MPI_U.value = ReadValue(datensatz, "MPI_U");
+            document.daten.MPI_E.selectedIndex = ReadValue(datensatz, "MPI_E");
+        }
+
+        function ReadDemoData(datensatz) {
+            document.daten.PDI_U.value = ReadValue(datensatz, "PDI_U");
+            document.daten.PDI_E.selectedIndex = ReadValue(datensatz, "PDI_E");
+            document.daten.PWS_U.value = ReadValue(datensatz, "PWS_U");
+            document.daten.PWS_E.selectedIndex = ReadValue(datensatz, "PWS_E");
+            document.daten.PDW_U.value = ReadValue(datensatz, "PDW_U");
+            document.daten.PDW_E.selectedIndex = ReadValue(datensatz, "PDW_E");
+            document.daten.PP_U.value = ReadValue(datensatz, "PP_U");
+            document.daten.PP_E.selectedIndex = ReadValue(datensatz, "PP_E");
+            document.daten.NP.value = ReadValue(datensatz, "NP");
+            document.daten.alpha.value = ReadValue(datensatz, "alpha");
+            document.daten.SD_U.value = ReadValue(datensatz, "SD_U");
+            document.daten.SD_E.selectedIndex = ReadValue(datensatz, "SD_E");
+            document.daten.SWS_U.value = ReadValue(datensatz, "SWS_U");
+            document.daten.SWS_E.selectedIndex = ReadValue(datensatz, "SWS_E");
+            document.daten.SDW_U.value = ReadValue(datensatz, "SDW_U");
+            document.daten.SDW_E.selectedIndex = ReadValue(datensatz, "SDW_E");
+            document.daten.SH_U.value = ReadValue(datensatz, "SH_U");
+            document.daten.SH_E.selectedIndex = ReadValue(datensatz, "SH_E");
+            document.daten.TSD_U.value = ReadValue(datensatz, "TSD_U");
+            document.daten.TSD_E.selectedIndex = ReadValue(datensatz, "TSD_E");
+            document.daten.TLD_U.value = ReadValue(datensatz, "TLD_U");
+            document.daten.TLD_E.selectedIndex = ReadValue(datensatz, "TLD_E");
+            document.daten.ECP.value = ReadValue(datensatz, "ECP");
+            document.daten.MPU_U.value = ReadValue(datensatz, "MPU_U");
+            document.daten.MPU_E.selectedIndex = ReadValue(datensatz, "MPU_E");
+            document.daten.MPI_U.value = ReadValue(datensatz, "MPI_U");
+            document.daten.MPI_E.selectedIndex = ReadValue(datensatz, "MPI_E");
+        }
+
+        function ReadDescription(datensatz) {
+            var wert = "";
+            if (datensatz == "Satz1") wert = escape(document.daten.TEXTA.value);
+            if (datensatz == "Satz2") wert = escape(document.daten.TEXTB.value);
+            if (datensatz == "Satz3") wert = escape(document.daten.TEXTC.value);
+            return wert;
+        }
+
+        function PrintDescription() {
+            if (CheckDataSet("Satz1") == 1) document.daten.TEXTA.value = unescape(ReadValue("Satz1", "TEXT"));
+            else document.daten.TEXTA.value = "<leer>";
+            if (CheckDataSet("Satz2") == 1) document.daten.TEXTB.value = unescape(ReadValue("Satz2", "TEXT"));
+            else document.daten.TEXTB.value = "<leer>";
+            if (CheckDataSet("Satz3") == 1) document.daten.TEXTC.value = unescape(ReadValue("Satz3", "TEXT"));
+            else document.daten.TEXTC.value = "<leer>";
+        }
+
+        function WriteData(datensatz) {
+            var jetzt = new Date();
+            var Auszeit = new Date(jetzt.getTime() + 10 * 365 * 24 * 60 * 60 * 1000);
+            keks = datensatz + "=";
+            SaveVar("PDI_U", document.daten.PDI_U.value);
+            SaveVar("PDI_E", document.daten.PDI_E.selectedIndex);
+            SaveVar("PWS_U", document.daten.PWS_U.value);
+            SaveVar("PWS_E", document.daten.PWS_E.selectedIndex);
+            SaveVar("PDW_U", document.daten.PDW_U.value);
+            SaveVar("PDW_E", document.daten.PDW_E.selectedIndex);
+            SaveVar("PP_U", document.daten.PP_U.value);
+            SaveVar("PP_E", document.daten.PP_E.selectedIndex);
+            SaveVar("NP", document.daten.NP.value);
+            SaveVar("alpha", document.daten.alpha.value);
+            SaveVar("SD_U", document.daten.SD_U.value);
+            SaveVar("SD_E", document.daten.SD_E.selectedIndex);
+            SaveVar("SWS_U", document.daten.SWS_U.value);
+            SaveVar("SWS_E", document.daten.SWS_E.selectedIndex);
+            SaveVar("SDW_U", document.daten.SDW_U.value);
+            SaveVar("SDW_E", document.daten.SDW_E.selectedIndex);
+            SaveVar("SH_U", document.daten.SH_U.value);
+            SaveVar("SH_E", document.daten.SH_E.selectedIndex);
+            SaveVar("TSD_U", document.daten.TSD_U.value);
+            SaveVar("TSD_E", document.daten.TSD_E.selectedIndex);
+            SaveVar("TLD_U", document.daten.TLD_U.value);
+            SaveVar("TLD_E", document.daten.TLD_E.selectedIndex);
+            SaveVar("ECP", document.daten.ECP.value);
+            SaveVar("TEXT", ReadDescription(datensatz));
+            SaveVar("MPU_U", document.daten.MPU_U.value);
+            SaveVar("MPU_E", document.daten.MPU_E.selectedIndex);
+            SaveVar("MPI_U", document.daten.MPI_U.value);
+            SaveVar("MPI_E", document.daten.MPI_E.selectedIndex);
+            document.cookie = keks + ";expires=" + Auszeit.toGMTString() + ";";
+        }
+
+        function P_calc() {
+            var W, hn, wn, LPV, LPH;
+            PDI = GetVal(document.daten.PDI_U.value) * Einheitenfaktor(document.daten.PDI_E.options[document.daten.PDI_E.selectedIndex].text);
+            PDW = GetVal(document.daten.PDW_U.value) * Einheitenfaktor(document.daten.PDW_E.options[document.daten.PDW_E.selectedIndex].text);
+            PWS = GetVal(document.daten.PWS_U.value) * Einheitenfaktor(document.daten.PWS_E.options[document.daten.PWS_E.selectedIndex].text);
+            NP = GetVal(document.daten.NP.value);
+            ALPHA = GetVal(document.daten.alpha.value) / 180 * Math.PI;
+            PP = GetVal(document.daten.PP_U.value) * Einheitenfaktor(document.daten.PP_E.options[document.daten.PP_E.selectedIndex].text);
+            PDO = PDI + 2 * Math.cos(ALPHA) * NP * (PDW + PWS) + 2 * PDW;
+            R = (PDO + PDI) / 4 / 0.0254;
+            W = (PDO - PDI) / 2 / 0.0254;
+            H = NP * (PWS + PDW) * Math.sin(ALPHA) / 0.0254;
+            L1 = NP * NP * R * R / (9 * R + 10 * H);
+            L2 = NP * NP * R * R / (8 * R + 11 * W);
+            LP = Math.sqrt(L1 * L1 * Math.sin(ALPHA) * Math.sin(ALPHA) + L2 * L2 * Math.cos(ALPHA) * Math.cos(ALPHA)) / 1000000;
+            document.daten.LP.value = LP * 1000000;
+            document.daten.PWL.value = NP * Math.PI * (PDI + PDO) / 2;
+            document.daten.PDO.value = PDO * 100;
+            document.daten.PH.value = H * 2.54 + PDW * 100;
+            document.daten.CPL.value = "";
+        }
+
+        function MP_calc() {
+            var MPI, MPU, LP, MP_F, MP_C;
+            MPU = GetVal(document.daten.MPU_U.value) * Einheitenfaktor(document.daten.MPU_E.options[document.daten.MPU_E.selectedIndex].text);
+            MPI = GetVal(document.daten.MPI_U.value) * Einheitenfaktor(document.daten.MPI_E.options[document.daten.MPI_E.selectedIndex].text);
+            MP_C = MPI / (2 * Math.PI * 50 * MPU);
+            LP = GetVal(document.daten.LP.value) / 1000000;
+            MP_F = 1 / (2 * Math.PI * Math.sqrt(LP * MP_C));
+            document.daten.MP_C.value = MP_C * 1000000000;
+            document.daten.MP_F.value = MP_F / 1000;
+        }
+
+        function S_calc() {
+            SD = GetVal(document.daten.SD_U.value) * Einheitenfaktor(document.daten.SD_E.options[document.daten.SD_E.selectedIndex].text);
+            SWS = GetVal(document.daten.SWS_U.value) * Einheitenfaktor(document.daten.SWS_E.options[document.daten.SWS_E.selectedIndex].text);
+            SDW = GetVal(document.daten.SDW_U.value) * Einheitenfaktor(document.daten.SDW_E.options[document.daten.SDW_E.selectedIndex].text);
+            SH = GetVal(document.daten.SH_U.value) * Einheitenfaktor(document.daten.SH_E.options[document.daten.SH_E.selectedIndex].text);
+            TSD = GetVal(document.daten.TSD_U.value) * Einheitenfaktor(document.daten.TSD_E.options[document.daten.TSD_E.selectedIndex].text);
+            TLD = GetVal(document.daten.TLD_U.value) * Einheitenfaktor(document.daten.TLD_E.options[document.daten.TLD_E.selectedIndex].text);
+            SD = SD + SDW;
+            SH = SH - SDW;
+            Med_K = (((0.00172 * SH / SD - 0.02777) * SH / SD + 0.15563) * SH / SD - 0.25442) * SH / SD + 0.585;
+            CS = Med_K * SD / 10000000000;
+            NS = SH / (SWS + SDW);
+            LS = lundin(SD / 2, SD / 2, 0, SH, (SH + SDW) / (SWS + SDW), SDW);
+            document.daten.LS.value = LS * 1000;
+            document.daten.NS.value = NS;
+            document.daten.SWL.value = NS * SD * Math.PI;
+            document.daten.MHK.value = Med_K;
+            document.daten.CS.value = CS * 1000000000000;
+            SF0 = 1 / (2 * Math.PI * Math.sqrt(LS * CS));
+            document.daten.SF0.value = SF0 / 1000;
+            if (TSD > 0 && TLD > 0 && TLD >= 2 * TSD) {
+                CT = (1.28 - TSD / TLD) * Math.sqrt(2 * Math.PI * TSD / 0.0254 * (TLD / 0.0254 - TSD / 0.0254)) / 1000000000000;
+            } else {
+                if (TLD == TSD || (TLD == 0 && TSD > 0) || (TSD == 0 && TLD > 0)) CT = 2 * Math.PI * Math.max(TLD, TSD) * 8.854188E-12;
+                else CT = 0;
+            }
+            document.daten.CT.value = CT * 1000000000000;
+            CS = CS + CT;
+            SF = 1 / (2 * Math.PI * Math.sqrt(LS * CS));
+            document.daten.SF.value = SF / 1000;
+            document.daten.SA.value = SH / SD;
+            if (GetVal(document.daten.LP.value) == 0) P_calc();
+            document.daten.CP.value = 1 / (2 * Math.PI * SF) / (2 * Math.PI * SF) / (GetVal(document.daten.LP.value) / 1000000) * 1000000000;
+            R0 = 0.0000000172 * NS * SD * Math.PI / (SDW * SDW / 4 * Math.PI);
+            Rac = NS * SD * Math.PI / 2 / SDW * Math.sqrt(0.0000004 * 0.0000000172 * SF);
+            R = R0 + Rac;
+            Q = 2 * Math.PI * SF * LS / R;
+            document.daten.SR0.value = R0;
+            document.daten.SRac.value = Rac;
+            document.daten.SQ.value = Q;
+            document.daten.CPL.value = "";
+        }
+
+        function LP_calc() {
+            P_calc();
+            S_calc();
+            DN = 0;
+            ECP = GetVal(document.daten.ECP.value);
+            CP = GetVal(document.daten.CP.value);
+            if (CP > ECP) DN = 1;
+            if (CP < ECP) DN = -1;
+            CP = ECP / 1000000000;
+            LP = GetVal(document.daten.LP.value) / 1000000;
+            PF = 1 / 2 / Math.PI / Math.sqrt(CP * LP);
+            SF = GetVal(document.daten.SF.value) * 1000;
+            NP = GetVal(document.daten.NP.value);
+            Best_DF = Math.abs(PF - SF);
+            Best_NP = NP;
+            while (DN != 0) {
+                NP = NP + DN;
+                document.daten.NP.value = NP;
+                P_calc();
+                S_calc();
+                SF = GetVal(document.daten.SF.value) * 1000;
+                LP = GetVal(document.daten.LP.value) / 1000000;
+                PF = 1 / 2 / Math.PI / Math.sqrt(CP * LP);
+                if (Best_DF > Math.abs(PF - SF)) {
+                    Best_DF = Math.abs(PF - SF);
+                    Best_NP = NP;
+                } else {
+                    DN = 0;
+                    NP = Best_NP;
+                    document.daten.NP.value = NP;
+                    P_calc();
+                    S_calc();
+                }
+            }
+            LP = GetVal(document.daten.LP.value) / 1000000;
+            PF = 1 / 2 / Math.PI / Math.sqrt(CP * LP);
+            document.daten.PF.value = PF / 1000;
+        }
+
+        function transfer_coils() {
+            var PDI, PDO, PDW, PWS, PP, ALPHA, SD, SWS, SDW, SH;
+            PDI = GetVal(document.daten.PDI_U.value) * Einheitenfaktor(document.daten.PDI_E.options[document.daten.PDI_E.selectedIndex].text);
+            PWirad = GetVal(document.daten.PDW_U.value) * Einheitenfaktor(document.daten.PDW_E.options[document.daten.PDW_E.selectedIndex].text);
+            PWS = GetVal(document.daten.PWS_U.value) * Einheitenfaktor(document.daten.PWS_E.options[document.daten.PWS_E.selectedIndex].text);
+            PTurns = GetVal(document.daten.NP.value);
+            ALPHA = GetVal(document.daten.alpha.value) / 180 * Math.PI;
+            PP = GetVal(document.daten.PP_U.value) * Einheitenfaktor(document.daten.PP_E.options[document.daten.PP_E.selectedIndex].text);
+            PRadius1 = PDI / 2 + PWirad / 2;
+            PRadius2 = PRadius1 + NP * (PWirad + PWS) * Math.cos(ALPHA);
+            PHeight1 = PP;
+            PHeight2 = PP + NP * (PWS + PWirad) * Math.sin(ALPHA);
+            SD = GetVal(document.daten.SD_U.value) * Einheitenfaktor(document.daten.SD_E.options[document.daten.SD_E.selectedIndex].text);
+            SWS = GetVal(document.daten.SWS_U.value) * Einheitenfaktor(document.daten.SWS_E.options[document.daten.SWS_E.selectedIndex].text);
+            SDW = GetVal(document.daten.SDW_U.value) * Einheitenfaktor(document.daten.SDW_E.options[document.daten.SDW_E.selectedIndex].text);
+            SH = GetVal(document.daten.SH_U.value) * Einheitenfaktor(document.daten.SH_E.options[document.daten.SH_E.selectedIndex].text);
+            SD = SD + SDW;
+            STurns = SH / (SWS + SDW);
+            SRadius1 = SD / 2;
+            SRadius2 = SRadius1;
+            SHeight1 = 0;
+            SHeight2 = SH - SDW;
+            SWirad = SDW;
+        }
+
+        function k_calc() {
+            var Ls, Lp, M;
+            transfer_coils();
+            Lp = GetVal(document.daten.LP.value) * 1e-6;
+            Ls = GetVal(document.daten.LS.value) * 1e-3;
+            M = mutual_L(PRadius1, PRadius2, PHeight1, PHeight2, PTurns, PWirad, SRadius1, SRadius2, SHeight1, SHeight2, STurns, SWirad);
+            document.daten.CPL.value = Math.floor(1000 * M / Math.sqrt(Lp * Ls)) / 10;
+        }
+
+        function filament(r1, r2, d) {
+            var K, fk, g1, g2, i;
+            K = ((r1 - r2) * (r1 - r2) + d * d) / ((r1 + r2) * (r1 + r2) + d * d);
+            if (K < 0.1) {
+                i = Math.log(K) / ln10x;
+                i -= i % 1;
+                if (i < -60) fk = -0.014468 * (Math.log(K) / ln10 + 0.53307);
+                else {
+                    g1 = grover14[i + 60];
+                    g2 = grover14[i + 59];
+                    fk = (i - Math.log(K) / ln10x) * (g2 - g1) + g1;
+                }
+            } else if (K >= 0.9) {
+                i = Math.log(1 - K) / ln10x;
+                i -= i % 1;
+                if (i < -40) fk = 2.4674025e-3 * Math.pow(1 - K, 1.5);
+                else {
+                    g1 = grover15[i + 40];
+                    g2 = grover15[i + 39];
+                    fk = Math.pow(10.0, (i - Math.log(1 - K) / ln10x) * (g2 - g1) + g1);
+                }
+            } else {
+                i = Math.floor(K * 100);
+                g1 = grover13[i - 10];
+                g2 = grover13[i - 9];
+                fk = (K * 100 - i) * (g2 - g1) + g1;
+            }
+            return 1e-4 * Math.sqrt(r1 * r2) * fk;
+        }
+
+        function mutual_L(Aradius1, Aradius2, Aheight1, Aheight2, Aturns, Awirad, Bradius1, Bradius2, Bheight1, Bheight2, Bturns, Bwirad) {
+            var j, k, n1, n2, nt1, nt2;
+            var M = 0,
+                mp = 0;
+            var r1, r2, d;
+            var dH1 = (Aheight2 - Aheight1) / Aturns;
+            var dR1 = (Aradius2 - Aradius1) / Aturns;
+            var dH2 = (Bheight2 - Bheight1) / Bturns;
+            var dR2 = (Bradius2 - Bradius1) / Bturns;
+            var doffset, r1offset, r2offset;
+            n1 = dR1 ? NB : 1;
+            n2 = dR2 ? NB : 1;
+            dR1 /= n1;
+            dR2 /= n2;
+            dH1 /= n1;
+            dH2 /= n2;
+            nt1 = Math.floor(Aturns * n1 + 0.5);
+            nt2 = Math.floor(Bturns * n2 + 0.5);
+            doffset = Aheight1 - Bheight1 + 0.5 * (dH1 - dH2);
+            r1offset = 0.5 * dR1 + Aradius1 - Awirad;
+            r2offset = 0.5 * dR2 + Bradius2 - Bwirad;
+            for (j = 0; j < nt1; j++) {
+                r1 = r1offset + j * dR1;
+                d = doffset + j * dH1;
+                for (k = 0; k < nt2; k++) M += filament(r1, r2offset + k * dR2, d - k * dH2);
+            }
+            M /= n1 * n2;
+            return M;
+        }
+
+        function lundin(radius1, radius2, height1, height2, turns, wirad) {
+            var MU = 4 * Math.PI * 1.0E-7;
+            var a = (radius1 + radius2) / 2;
+            var b = height2 - height1;
+            var x = 4 * a * a / (b * b);
+            var f1 = (1 + 0.383901 * x + 0.017108 * x * x) / (1 + 0.258952 * x);
+            var L = MU * turns * turns * a * a * Math.PI / b * (f1 - 8 * a / (3 * Math.PI * b));
+            return L;
+        }
+
+        function plot_leftwire(x, y, wd, secx) {
+            F1.document.writeln("<div style=\"position:absolute; top:" + (y - wd / 2) + "px; left:" + x + "px\"><img src=\"img/wire_left.gif\" width=\"" + (secx - x) + "px\" height=\"" + wd + "px\"><\/div>");
+            F1.document.writeln("<div style=\"position:absolute; top:" + (y - wd / 2) + "px; left:" + (x - wd / 2) + "px\"><img src=\"img/wire.gif\" width=\"" + wd + "px\"><\/div>");
+        }
+
+        function plot_rightwire(x, y, wd, secx) {
+            F1.document.writeln("<div style=\"position:absolute; top:" + (y - wd / 2) + "px; left:" + secx + "px\"><img src=\"img/wire_right.gif\" width=\"" + (x - secx) + "px\" height=\"" + wd + "px\"><\/div>");
+            F1.document.writeln("<div style=\"position:absolute; top:" + (y - wd / 2) + "px; left:" + (x - wd / 2) + "px\"><img src=\"img/wire.gif\" width=\"" + wd + "px\"><\/div>");
+        }
+
+        function plot_torus(x, y, gross_d, klein_d) {
+            F1.document.write("<div style=\"position:absolute; top:", (y - klein_d / 2 * 219 / 259), "px; left:", (x - gross_d / 2), "px\"><img src=\"img/torus_leftright.gif\" height=\"", klein_d * 219 / 259, "px\" border=0><\/div>");
+            F1.document.write("<div style=\"position:absolute; top:", (y - klein_d / 2 * 219 / 259), "px; left:", (x + gross_d / 2 - klein_d), "px\"><img src=\"img/torus_leftright.gif\" height=\"", klein_d * 219 / 259, "px\" border=0><\/div>");
+            F1.document.write("<div style=\"position:absolute; top:", (y - klein_d / 2), "px; left:", (x - gross_d / 2 + klein_d / 2), "px\"><img src=\"img/torus_center.gif\" width=\"", (gross_d - klein_d), "px\" height=\"", klein_d, "px\" border=0><\/div>");
+        }
+
+        function plot_sphere(x, y, d) {
+            F1.document.write("<div style=\"position:absolute; top:", (y - d / 2), "px; left:", (x - d / 2), "px\"><img src=\"img/sphere.gif\" width=\"", d, "px\" border=0><\/div>");
+        }
+
+        function plot_antenna(x, y, l) {
+            F1.document.write("<div style=\"position:absolute; top:" + (y - l) + "px; left:" + (x) + "px\"><img src=\"img/secondary.gif\" width=\"1px\" height=\"" + l + "px\" border=0><\/div>");
+        }
+
+        function plot_secondary(x, y, h, d) {
+            F1.document.write("<div style=\"position:absolute; top:" + (y - h) + "px; left:" + (x - d / 2) + "px\"><img src=\"img/secondary.gif\" width=\"" + d + "px\" height=\"" + h + "px\" border=0><\/div>");
+        }
+
+        function plot_primary(x, y, pdi, pws, alpha, n, d) {
+            var i, wx, wy;
+            for (i = n; i >= 1; i--) {
+                wy = y - (pws + d) * Math.sin(alpha) * (i - 1);
+                wx = x + pdi / 2 + (pws + d) * Math.cos(alpha) * (i - 1);
+                plot_rightwire(wx, wy, d, x);
+                wx = x - pdi / 2 - (pws + d) * Math.cos(alpha) * (i - 1);
+                plot_leftwire(wx, wy, d, x);
+            }
+        }
+
+        function plot_ruler(x, y, lenxpx, lenypx, leny) {
+            F1.document.writeln("<div style=\"position:absolute; top:" + (y - lenypx / 2) + "px; left:" + (x - lenxpx / 2) + "px\"><img src=\"img/ruler.gif\" width=\"" + lenxpx + "px\" height=\"1px\"><\/div>");
+            F1.document.writeln("<div style=\"position:absolute; top:" + (y - lenypx / 2) + "px; left:" + x + "px\"><img src=\"img/ruler.gif\" width=\"1px\" height=\"" + lenypx + "px\"><\/div>");
+            F1.document.writeln("<div style=\"position:absolute; top:" + (y + lenypx / 2) + "px; left:" + (x - lenxpx / 2) + "px\"><img src=\"img/ruler.gif\" width=\"" + lenxpx + "px\" height=\"1px\"><\/div>");
+            F1.document.writeln("<div style=\"position:absolute; top:" + y + "px; left:" + (x + lenxpx / 3) + "px; color:#FFFFFF\">" + leny + " m<\/div>");
+        }
+
+        function plot_device() {
+            var i, max_x, max_y, scale, options, ylen;
+            var PDI, PDW, PWS, PP, ALPHA, SD, SH, TLD, TSD;
+            P_calc();
+            S_calc();
+            PDI = GetVal(document.daten.PDI_U.value) * Einheitenfaktor(document.daten.PDI_E.options[document.daten.PDI_E.selectedIndex].text);
+            PDW = GetVal(document.daten.PDW_U.value) * Einheitenfaktor(document.daten.PDW_E.options[document.daten.PDW_E.selectedIndex].text);
+            PWS = GetVal(document.daten.PWS_U.value) * Einheitenfaktor(document.daten.PWS_E.options[document.daten.PWS_E.selectedIndex].text);
+            NP = GetVal(document.daten.NP.value);
+            ALPHA = GetVal(document.daten.alpha.value) / 180 * Math.PI;
+            PP = GetVal(document.daten.PP_U.value) * Einheitenfaktor(document.daten.PP_E.options[document.daten.PP_E.selectedIndex].text);
+            SD = GetVal(document.daten.SD_U.value) * Einheitenfaktor(document.daten.SD_E.options[document.daten.SD_E.selectedIndex].text);
+            SDW = GetVal(document.daten.SDW_U.value) * Einheitenfaktor(document.daten.SDW_E.options[document.daten.SDW_E.selectedIndex].text);
+            SH = GetVal(document.daten.SH_U.value) * Einheitenfaktor(document.daten.SH_E.options[document.daten.SH_E.selectedIndex].text);
+            SD = SD + SDW;
+            TSD = GetVal(document.daten.TSD_U.value) * Einheitenfaktor(document.daten.TSD_E.options[document.daten.TSD_E.selectedIndex].text);
+            TLD = GetVal(document.daten.TLD_U.value) * Einheitenfaktor(document.daten.TLD_E.options[document.daten.TLD_E.selectedIndex].text);
+            if (PDI == 0 || PDW == 0 || NP == 0 || SD == SDW || SH == 0) alert("Geometriedaten unvollständig!");
+            else {
+                options = "width=" + (screen.availWidth - 11) + ",height=" + (screen.availHeight - 30) + ",left=0,top=0,menubar=yes";
+                if (fensteroffen == 1) {
+                    if (F1.closed == false) F1.document.close();
+                    else F1 = window.open("about:blank", "sketch", options);
+                } else F1 = window.open("about:blank", "sketch", options);
+                F1.document.open();
+                F1.focus();
+                fensteroffen = 1;
+                F1.document.write("<html><title>Skizze des Teslatrafos<\/title><head><\/head><body bgcolor=\"#000000\">");
+                if (TLD == 0 && TSD > 0) TLD = TSD;
+                if (TSD == 0 && TLD > 0) TSD = TLD;
+                if (TLD <= 2 * TSD && TLD != TSD) {
+                    TLD = 0;
+                    TSD = 0;
+                }
+                max_y = SH + TSD;
+                if (PP < 0) max_y -= PP;
+                max_x = (TLD < PDO) ? PDO : TLD;
+                scale = screen.availHeight / max_y;
+                if (screen.availWidth / max_x < scale) scale = screen.availWidth / max_x;
+                scale = scale * 0.70;
+                yoffset = screen.availHeight * 0.15;
+                if (TSD != TLD && TLD > 0 && TSD > 0)
+                    plot_torus((screen.availWidth / 2), (yoffset + TSD * scale / 2), (TLD * scale), (TSD * scale));
+                else {
+                    if (TLD == TSD && TLD > 0)
+                        plot_sphere((screen.availWidth / 2), (yoffset + TLD * scale / 2), (TLD * scale));
+                    else
+                        plot_antenna((screen.availWidth / 2), yoffset, 20);
+                }
+                plot_primary((screen.availWidth / 2), (yoffset + (TSD + SH - PP) * scale), (PDI * scale), (PWS * scale), ALPHA, NP, (PDW * scale));
+                plot_secondary((screen.availWidth / 2), (yoffset + (TSD + SH) * scale), SH * scale, SD * scale);
+                ylen = 0.001;
+                i = 2;
+                lasti = 2;
+                while (ylen * scale * i < 0.8 * screen.availHeight) {
+                    ylen = ylen * i;
+                    if (i == 2 && lasti == 2) {
+                        lasti = i;
+                        i = 2.5;
+                    } else {
+                        lasti = i;
+                        i = 2;
+                    }
+                }
+                i = "*" + ylen;
+                if (i.charAt(1) == ".") ylen = "0" + ylen;
+                plot_ruler(20, screen.availHeight / 2, 20, ylen * scale, ylen);
+                F1.document.write("<\/body><\/html>");
+            }
+        }
+
+        function add_text(text) {
+            comment += text + crlf;
+            counter++;
+            if (maxlen < text.length) maxlen = text.length;
+        }
+
+        function create_comments() {
+            var PDI, SD, NP, SA, CPL, ECP, CP, MPU, PDO, PH, PP, SH, TLD;
+            comment = "";
+            counter = 0;
+            maxlen = 0;
+            crlf = String.fromCharCode(13, 10);
+            PDI = GetVal(document.daten.PDI_U.value) * Einheitenfaktor(document.daten.PDI_E.options[document.daten.PDI_E.selectedIndex].text);
+            SD = GetVal(document.daten.SD_U.value) * Einheitenfaktor(document.daten.SD_E.options[document.daten.SD_E.selectedIndex].text);
+            TLD = GetVal(document.daten.TLD_U.value) * Einheitenfaktor(document.daten.TLD_E.options[document.daten.TLD_E.selectedIndex].text);
+            if (PDI < SD) add_text("Primärinnendurchmesser zu klein oder Sekundärspule zu groß");
+            NP = GetVal(document.daten.NP.value);
+            if (NP < 3) add_text("Hohe Verluste im Primärkreis durch geringe Windungszahl der Primärspule");
+            if (NP > 15) add_text("Windungszahl im Primärkreis ungewöhnlich hoch");
+            SA = GetVal(document.daten.SA.value);
+            if (SA > 5) add_text("Sekundärspule ungünstig schlank");
+            if (SA < 2.5) add_text("Wicklungslänge der Sekundärspule evtl. ungünstig klein");
+            CPL = GetVal(document.daten.CPL.value);
+            if (CPL > 25) {
+                add_text("Kopplung sehr fest");
+            } else {
+                if (CPL < 5) {
+                    add_text("Kopplung sehr lose");
+                } else {
+                    if ((CPL >= 5) && (CPL <= 25)) {} else {
+                        add_text("Kopplung wurde nicht berechnet");
+                    }
+                }
+            }
+            ECP = GetVal(document.daten.ECP.value);
+            CP = GetVal(document.daten.CP.value);
+            MP_C = GetVal(document.daten.MP_C.value);
+            if ((ECP > 1.5 * MP_C) && (CP > 1.5 * MP_C)) {
+                add_text("Speisetrafo für vorhandene und benötigte Kapazität zu schwach");
+            } else {
+                if (ECP > 1.5 * MP_C) {
+                    add_text("Speisetrafo für vorhandene Kapazität zu schwach");
+                }
+                if (CP > 1.5 * MP_C) {
+                    add_text("Speisetrafo für benötigte Kapazität zu schwach");
+                }
+            }
+            if ((ECP < (MP_C / 3)) && (CP < (MP_C / 3))) {
+                add_text("Vorhandene und benötigte Kapazität für Speisetrafo zu klein");
+            } else {
+                if (ECP < (MP_C / 3)) {
+                    add_text("Vorhandene Kapazität für Speisetrafo zu klein");
+                }
+                if (CP < (MP_C / 3)) {
+                    add_text("Benötigte Kapazität für Speitetrafo zu klein");
+                }
+            }
+            MPU = GetVal(document.daten.MPU_U.value) * Einheitenfaktor(document.daten.MPU_E.options[document.daten.MPU_E.selectedIndex].text);
+            if ((MPU < 3000) && (MPU > 0)) {
+                add_text("Spannung im Primärkreis sehr niedrig");
+            } else {
+                if (MPU >= 3000) {} else {
+                    add_text("Daten des Speisetrafos sind nicht angegeben");
+                }
+            }
+            PDO = GetVal(document.daten.PDO.value) / 100;
+            PDI = GetVal(document.daten.PDI_U.value) * Einheitenfaktor(document.daten.PDI_E.options[document.daten.PDI_E.selectedIndex].text);
+            PH = GetVal(document.daten.PH.value) / 100;
+            PP = GetVal(document.daten.PP_U.value) * Einheitenfaktor(document.daten.PP_E.options[document.daten.PP_E.selectedIndex].text);
+            SD = GetVal(document.daten.SD_U.value) * Einheitenfaktor(document.daten.SD_E.options[document.daten.SD_E.selectedIndex].text);
+            SH = GetVal(document.daten.SH_U.value) * Einheitenfaktor(document.daten.SH_E.options[document.daten.SH_E.selectedIndex].text);
+            if ((Math.sqrt((PDO - SD) * (PDO - SD) / 4 + (SH - PH - PP) * (SH - PH - PP)) < 0.7 * SH) ||
+                (Math.sqrt((PDO - TLD) * (PDO - TLD) / 4 + (SH - PH - PP) * (SH - PH - PP)) < 0.7 * SH)) {
+                add_text("Evtl. Überschläge zur äußersten Windung der Primärspule");
+            }
+            if ((PDI - SD) / 2 < 0.7 * SH * Math.sin(PP / SH * Math.PI / 2)) {
+                add_text("Evtl. Überschläge zur innersten Windung der Primärspule");
+            }
+            if (comment == "") {
+                add_text("Keine Designfehler gefunden");
+            }
+            document.daten.comment.value = comment;
+            if (document.daten.comment.rows < counter) document.daten.comment.rows = counter;
+            if (document.daten.comment.cols < maxlen) document.daten.comment.cols = maxlen;
+        }
+       </script>
+</head>
+<body>
+    <a href="wissenschaft.html" class="back">← Zurück</a>
+    <div class="container">
+        <h1>Teslatrafo-Berechnung</h1><br>
+        <form name="daten">
+            <table>
+                <tr><th colspan="3" align="left"><h3>Angaben zur Primärspule</h3></th></tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Innendurchmesser<span>Genauer: Das doppelte des kleinsten Abstandes zwischen Wicklung und Spulenachse</span></a></td>
+                    <td align="right"><input type="text" name="PDI_U" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td><select name="PDI_E" size="1"> <option> m <option> cm <option> mm <option> yd <option> ft <option> in <option> mill </select></td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Lücke zwischen Windungen<span>Breite des Luftspaltes zwischen je zwei benachbarten Windungen<br>Falls die Windungen dicht nebeneinander gewickelt werden, ist dieser Wert 0.</span></a></td>
+                    <td align="right"><input type="text" name="PWS_U" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td><select name="PWS_E" size="1"> <option> m <option> cm <option> mm <option> yd <option> ft <option> in <option> mill </select></td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Drahtdurchmesser<span>Inklusive Lack bzw. Isolation!</span></a></td>
+                    <td align="right"><input type="text" name="PDW_U" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td><select name="PDW_E" size="1"> <option> m <option> cm <option> mm <option> yd <option> ft <option> in <option> mill </select></td>
+                    <td>  AWG</td>
+                    <td align="right"><input type="text" name="PDW_AWG" size="5" maxlength="15"></td>
+                    <td><input type="button" value="umrechnen" onClick="{document.daten.PDW_U.value=AWG_calc(document.daten.PDW_AWG.value);document.daten.PDW_E.selectedIndex=2;}"></td>
+                </tr>
+                <tr>
+                    <td>Windungsanzahl</td>
+                    <td align="right"><input type="text" name="NP" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Wicklungswinkel (0=flach, 90=vertikal)<span>Werte zwischen 0 und 90 bedeuten, daß der Durchmesser der Spule nach oben zunimmt.</span></a></td>
+                    <td align="right"><input type="text" name="alpha" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckAngle(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td>Grad</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Höhe oberhalb Sekundärspulenanfang<span>Vertikaler Abstand der ersten Primärwindung von der ersten Sekundärwindung<br>Positive Werte bedeuten, daß die Primärspule höher als die Sekundärspule beginnt.</span></a></td>
+                    <td align="right"><input type="text" name="PP_U" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckZahlpm(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td><select name="PP_E" size="1"> <option> m <option> cm <option> mm <option> yd <option> ft <option> in <option> mill </select></td>
+                </tr>
+                <tr>
+                    <td><input type="button" value="Primärspule berechnen" onClick="{P_calc();if ((GetVal(document.daten.NS.value)>0)&&(GetVal(document.daten.NS.value)<1E9)) S_calc();}"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr><td> </td><td></td><td></td></tr>
+                <tr><th colspan="3" align="left"><h3>Ergebnisse</h3></th></tr>
+                <tr>
+                    <td>Außendurchmesser</td>
+                    <td><input type="text" name="PDO" size="10" readonly></td>
+                    <td>cm</td>
+                </tr>
+                <tr>
+                    <td>Spulenhöhe</td>
+                    <td><input type="text" name="PH" size="10" readonly></td>
+                    <td>cm</td>
+                </tr>
+                <tr>
+                    <td>Drahtlänge</td>
+                    <td><input type="text" name="PWL" size="10" readonly></td>
+                    <td>m</td>
+                </tr>
+                <tr>
+                    <td>Induktivität (Wheeler)</td>
+                    <td><input type="text" name="LP" size="10" readonly></td>
+                    <td>µH</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr><td> </td><td></td><td></td></tr>
+                <tr><th colspan="3" align="left"><h3>Angaben zur Stromversorgung</h3></th></tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Ausgangsspannung<span>Hier ist der Effektivwert gemeint.</span></a></td>
+                    <td align="right"><input type="text" name="MPU_U" size="5" maxlength="5" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td><select name="MPU_E" size="1"> <option> kV <option> V </select></td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Ausgangsstrom<span>Hier ist der Effektivwert gemeint.</span></a></td>
+                    <td align="right"><input type="text" name="MPI_U" size="5" maxlength="5" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td><select name="MPI_E" size="1"> <option> mA <option> A </select></td>
+                </tr>
+                <tr>
+                    <td><input type="button" value="Daten verarbeiten" onClick="{MP_calc();}"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr><td> </td><td></td><td></td></tr>
+                <tr><th colspan="3" align="left"><h3>Ergebnisse</h3></th></tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Maximal nutzbare Primärkapazität<span>Bei dieser Kapazität ist die Ausgangsimpedanz des Trafos gleich dem Blindwiderstand des Kondensators bei 50Hz.</span></a></td>
+                    <td><input type="text" name="MP_C" size="10" readonly></td>
+                    <td>nF</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Minimal erreichbare Frequenz<span>Tiefere Frequenzen sind nur mit einem stärkeren Speisetrafo und einer dementsprechend größeren Kapazität oder mehr Primärwindungen zu erreichen.</span></a></td>
+                    <td><input type="text" name="MP_F" size="10" readonly></td>
+                    <td>kHz</td>
+                </tr>
+                <tr><td> </td><td></td><td></td></tr>
+                <tr><th colspan="3" align="left"><h3>Angaben zur Sekundärspule</h3></th></tr>
+                <tr>
+                    <td>Durchmesser des Spulenkörpers</td>
+                    <td align="right"><input type="text" name="SD_U" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td><select name="SD_E" size="1"> <option> m <option> cm <option> mm <option> yd <option> ft <option> in <option> mill </select></td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Lücke zwischen Windungen<span>Breite des Luftspaltes zwischen je zwei benachbarten Windungen bzw. Durchmesser der Angelschnur, falls eine parallel zum Lackdraht gewickelt wird<br>Falls die Windungen dicht nebeneinander gewickelt werden, ist dieser Wert 0</span></a></td>
+                    <td align="right"><input type="text" name="SWS_U" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td><select name="SWS_E" size="1"> <option> m <option> cm <option> mm <option> yd <option> ft <option> in <option> mill </select></td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Drahtdurchmesser<span>Inklusive Lackschicht!</span></a></td>
+                    <td align="right"><input type="text" name="SDW_U" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td><select name="SDW_E" size="1"> <option> m <option> cm <option> mm <option> yd <option> ft <option> in <option> mill </select></td>
+                    <td>  AWG</td>
+                    <td align="right"><input type="text" name="SDW_AWG" size="5" maxlength="15"></td>
+                    <td><input type="button" value="umrechnen" onClick="{document.daten.SDW_U.value=AWG_calc(document.daten.SDW_AWG.value);document.daten.SDW_E.selectedIndex=2;}"></td>
+                </tr>
+                <tr>
+                    <td>Wicklungslänge</td>
+                    <td align="right"><input type="text" name="SH_U" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td><select name="SH_E" size="1"> <option> m <option> cm <option> mm <option> yd <option> ft <option> in <option> mill </select></td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Dicke des Torus (0 bedeutet Kugel)<span>Das doppelte des kleinen Radius'</span></a></td>
+                    <td align="right"><input type="text" name="TSD_U" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td><select name="TSD_E" size="1"> <option> m <option> cm <option> mm <option> yd <option> ft <option> in <option> mill </select></td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Außendurchmesser des Torus<span>Das doppelte des großen Radius'</span></a></td>
+                    <td align="right"><input type="text" name="TLD_U" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td><select name="TLD_E" size="1"> <option> m <option> cm <option> mm <option> yd <option> ft <option> in <option> mill </select></td>
+                </tr>
+                <tr>
+                    <td><input type="button" value="Sekundärspule berechnen" onClick="S_calc()"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr><td> </td><td></td><td></td></tr>
+                <tr><th colspan="3" align="left"><h3>Ergebnisse</h3></th></tr>
+                <tr>
+                    <td>Windungsanzahl</td>
+                    <td align="right"><input type="text" name="NS" size="10" readonly></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Aspektverhältnis<span>=Höhe/Durchmesser</span></a></td>
+                    <td align="right"><input type="text" name="SA" size="10" readonly></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Induktivität (Lundin)</td>
+                    <td align="right"><input type="text" name="LS" size="10" readonly></td>
+                    <td>mH</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Kopplungsfaktor<span>Werte von 10-20% sind üblich. Je fester die Kopplung ist, desto schneller muß die Funkenstrecke löschen können.</span></a></td>
+                    <td align="right"><input type="text" name="CPL" size="10" readonly></td>
+                    <td>%</td>
+                    <td></td>
+                    <td colspan="2"><input type="button" value="berechnen" onClick="k_calc()"> (langsam!)</td>
+                </tr>
+                <tr>
+                    <td>Drahtlänge</td>
+                    <td align="right"><input type="text" name="SWL" size="10" readonly></td>
+                    <td>m</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Medhurst K<span>Koeffizient zur Abschätzung der Eigenkapazität der Spule nach der Medhurst-Formel</span></a></td>
+                    <td align="right"><input type="text" name="MHK" size="10" readonly></td>
+                    <td>pF/cm</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Eigenkapazität ohne Torus<span>Nach der Medhurst-Formel bestimmte Kapazität</span></a></td>
+                    <td align="right"><input type="text" name="CS" size="10" readonly></td>
+                    <td>pF</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Toruskapazität<span>Kapazität des Torus nach einer Näherungsformel</span></a></td>
+                    <td align="right"><input type="text" name="CT" size="10" readonly></td>
+                    <td>pF</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Eigenfrequenz ohne Torus<span>Frequenz der Sekundärspule mit ihrer Eigenkapazität</span></a></td>
+                    <td align="right"><input type="text" name="SF0" size="10" readonly></td>
+                    <td>kHz</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Eigenfrequenz mit Torus<span>Frequenz der Sekundärspule mit ihrer Eigenkapazität und der Toruskapazität</span></a></td>
+                    <td align="right"><input type="text" name="SF" size="10" readonly></td>
+                    <td>kHz</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Gleichstromwiderstand<span>Widerstand der Sekundärspule bei Gleichstrom</span></a></td>
+                    <td align="right"><input type="text" name="SR0" size="10" readonly></td>
+                    <td>Ohm</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Wechselstromwiderstand<span>Zusätzlicher Widerstand der Sekundärspule bei ihrer Eigenfrequenz durch Skineffekt</span></a></td>
+                    <td align="right"><input type="text" name="SRac" size="10" readonly></td>
+                    <td>Ohm</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Güte<span>Güte der Sekundärspule bei ihrer Eigenfrequenz</span></a></td>
+                    <td align="right"><input type="text" name="SQ" size="10" readonly></td>
+                    <td></td>
+                </tr>
+                <tr><td> </td><td></td><td></td></tr>
+                <tr><th colspan="3" align="left"><h3>Primärkreis abstimmen</h3></th></tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Vorhandene Kapazität<span>Kapazität im Primärkreis</span></a></td>
+                    <td align="right"><input type="text" name="ECP" size="5" maxlength="15" onBlur="{this.value=TrimDot(this.value); if (!CheckZahl(this.value)) {this.value=0;this.focus();}}"></td>
+                    <td>nF</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="tooltip">Benötigte Kapazität<span>Erforderliche Kapazität im Primärkreis zur Abstimmung auf die Sekundärspule</span></a></td>
+                    <td align="right"><input type="text" name="CP" size="10" readonly></td>
+                    <td>nF</td>
+                </tr>
+                <tr>
+                    <td><input type="button" value="Primärkreis berechnen" onClick="LP_calc()"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr><td> </td><td></td><td></td></tr>
+                <tr><th colspan="3" align="left"><h3>Ergebnisse</h3></th></tr>
+                <tr>
+                    <td>Eigenfrequenz des Primärkreises</td>
+                    <td align="right"><input type="text" name="PF" size="10" readonly></td>
+                    <td>kHz</td>
+                </tr>
+                <tr><td> </td><td></td><td></td></tr>
+                <tr><th colspan="3" align="left"><h3>Designprüfung</h3></th></tr>
+                <tr>
+                    <td><input type="button" value="prüfen" onClick="create_comments()"></td>
+                    <td align="right"><textarea name="comment" rows="5" cols="40" readonly></textarea></td>
+                    <td></td>
+                </tr>
+                <tr><td> </td><td></td><td></td></tr>
+                <tr><th colspan="3" align="left"><h3>Skizze</h3></th></tr>
+                <tr>
+                    <td><input type="button" value="Skizze anzeigen" onClick="plot_device()"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr><td> </td><td></td><td></td></tr>
+                <tr><th colspan="3" align="left"><h3>Datensätze</h3></th></tr>
+                <tr>
+                    <td><input type="button" value="Datensatz 1 speichern" onClick="WriteData('Satz1')"></td>
+                    <td><input type="button" value="Datensatz 1 laden" onClick="ReadData('Satz1')"></td>
+                    <td><input type="text" name="TEXTA" size="10" readonly></td>
+                </tr>
+                <tr>
+                    <td><input type="button" value="Datensatz 2 speichern" onClick="WriteData('Satz2')"></td>
+                    <td><input type="button" value="Datensatz 2 laden" onClick="ReadData('Satz2')"></td>
+                    <td><input type="text" name="TEXTB" size="10" readonly></td>
+                </tr>
+                <tr>
+                    <td><input type="button" value="Datensatz 3 speichern" onClick="WriteData('Satz3')"></td>
+                    <td><input type="button" value="Datensatz 3 laden" onClick="ReadData('Satz3')"></td>
+                    <td><input type="text" name="TEXTC" size="10" readonly></td>
+                </tr>
+                <tr>
+                    <td><input type="button" value="Demo-Daten Minitesla laden" onClick="ReadDemoData('Demo4')"></td>
+                    <td><input type="button" value="Demo-Daten Miditesla laden" onClick="ReadDemoData('Demo5')"></td>
+                    <td><input type="button" value="Demo-Daten Bigtesla laden" onClick="ReadDemoData('Demo6')"></td>
+                </tr>
+            </table>
+    </form>
+    <div class="download">
+        <p>Dieses Script gibt's hier zum <a href="teslascript.zip"> Download!</a></p>
+    </div>
+</div>
+</body>
+</html>

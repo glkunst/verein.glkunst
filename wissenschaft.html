@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wissenschaft - Verein für ganzheitliche Lebenskunst</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #2e4a2e; /* Dark green background */
+            overflow: hidden;
+        }
+        .back {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 20px;
+            color: #ffffff !important; /* White, overriding defaults */
+            text-decoration: none;
+            z-index: 2;
+            transition: opacity 0.5s ease;
+        }
+        .back:hover {
+            color: #8ba888 !important; /* Hover effect */
+        }
+        .icon-grid {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            z-index: 1;
+        }
+        .icon-grid a {
+            display: block;
+        }
+        .icon-grid img {
+            width: 150px;
+            height: 150px;
+            border: 2px solid #4a704a;
+            border-radius: 10px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .icon-grid img:hover {
+            transform: scale(1.1);
+            border-color: #8ba888;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back">← Zurück</a>
+    <div class="icon-grid" id="iconGrid">
+        <a href="teslaform.html">
+            <img src="assets/teslacoil.png" alt="Tesla Coil" title="Tesla Coil">
+        </a>
+        <a href="placeholder2.html">
+            <img src="assets/meditation2.png" alt="meditation" title="meditation">
+        </a>
+        <a href="placeholder2.html">
+        <img src="assets/ufo.jpg" alt="OTC-X1" title="OTC-X1">
+          </a>
+        <a href="placeholder2.html">
+        <img src="assets/nano.png" alt="ORIN" title="ORIN">
+            </a>
+        <a href="placeholder2.html">
+        <img src="assets/waves.jpg" alt="Music" title="Music">
+            </a>
+        <a href="placeholder2.html">
+        <img src="assets/www.png" alt="Links" title="Links">
+            </a>
+    </div>
+</body>
+</html>
