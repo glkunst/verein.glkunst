@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verein für ganzheitliche Lebenskunst - Angebote</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #E8F0E8; /* Helles Grün */
+        }
+        header {
+            background-color: #2E4A2E; /* Dunkelgrün */
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        nav {
+            background-color: #3E5C3E; /* Etwas helleres Grün */
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .offer, .beizli {
+            background-color: white;
+            border: 1px solid #4A704A; /* Grüner Rand */
+            border-radius: 5px;
+            margin: 20px 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .offer img, .beizli img {
+            max-width: 200px;
+            margin-right: 20px;
+            border-radius: 5px;
+        }
+        .offer h3, .beizli h3 {
+            margin-top: 0;
+            color: #2E4A2E; /* Dunkelgrün für Überschriften */
+        }
+        footer {
+            background-color: #2E4A2E; /* Dunkelgrün */
+            color: white;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+        }
+         .back {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 20px;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back">← Zurück</a>
+
+    <header>
+        <h1>Verein für ganzheitliche Lebenskunst</h1>
+        <p>Willkommen bei uns – Entdecke unsere Angebote für Mitglieder und unser öffentliches Beizli!</p>
+    </header>
+
+    <nav>
+        <a href="#angebote">Angebote</a>
+        <a href="#beizli">Vereinslokal</a>
+        <a href="#kontakt">Kontakt</a>
+    </nav>
+
+    <div class="container">
+        <h2 id="angebote">Unsere Angebote </h2>
+
+        <!-- Angebot 1: Fermentierter Manuka-Honig-Drink -->
+        <div class="offer">
+            <img src="assets/manuka.jpg" alt="Fermentierter Manuka-Honig-Drink">
+            <div>
+                <h3>Fermentierter Manuka-Honig-Drink</h3>
+                <p>Ein gesunder, probiotischer Drink aus hochwertigem Manuka-Honig. Perfekt für dein Immunsystem! Exklusiv für Vereinsmitglieder.</p>
+                <p><strong>Preis:</strong> 23 CHF pro Flasche (250 ml)</p>
+                <p>Interessiert? Kontaktiere uns direkt!</p>
+            </div>
+        </div>
+
+        <!-- Angebot 2: Bogenschießkurs -->
+        <div class="offer">
+            <img src="assets/bow1.jpg" alt="Bogenschießkurs">
+            <div>
+                <h3>Bogenschießkurs</h3>
+                <p>Lerne die Kunst des Bogenschießens in unserem professionellen Kurs. Für Anfänger und Fortgeschrittene. Exklusiv für Vereinsmitglieder.</p>
+                <p><strong>Preis:</strong> 150 CHF pro Person (3 Stunden)</p>
+              <p>Schau dir unseren <a href="assets/bogen_kurs.png" target="_blank">Flyer</a> an</p>
+            </div>
+        </div>
+        <!-- Angebot 6: Einfache Gartenarbeiten -->
+        <div class="offer">
+            <img src="assets/photo_2025-04-09_17-17-33.jpg" alt="Einfache Gartenarbeiten">
+            <div>
+                <h3>Einfache Gartenarbeiten</h3>
+                <p>Wir übernehmen einfache Gartenarbeiten wie Rasenmähen, Unkraut jäten oder Laub entfernen – keine Gartengestaltungen. Exklusiv für Vereinsmitglieder.</p>
+                <p><strong>Preis:</strong> 40 CHF pro Stunde</p>
+                <p>Interessiert? Kontaktiere uns für einen Termin!</p>
+            </div>
+        </div>
+
+        <!-- Angebot 3: 3D-Druckaufträge und Prototyping -->
+        <div class="offer">
+            <img src="assets/3d.jpg" alt="3D-Druck und Prototyping">
+            <div>
+                <h3>3D-Druckaufträge und Prototyping</h3>
+                <p>Wir bieten maßgeschneiderte 3D-Druckaufträge, Prototyping, CAD-Zeichnungen, Mikrocontroller-Programmierung, Motorsteuerungen und mehr. Von Teslaspulen bis zu individuellen Maschinen – wir setzen deine Ideen um! Exklusiv für Vereinsmitglieder.</p>
+                <p><strong>Preis:</strong> Ab 50 CHF (je nach Aufwand)</p>
+                <p>Interessiert? Kontaktiere uns für ein Angebot!</p>
+            </div>
+        </div>
+
+        <!-- Angebot 5: PC-Support -->
+        <div class="offer">
+            <img src="assets/nano.png" alt="PC-Support">
+            <div>
+                <h3>PC-Support (Privatpersonen)</h3>
+                <p>Probleme mit deinem Computer? Wir bieten professionellen PC-Support für Privatpersonen – von Softwareproblemen bis zu Hardware-Reparaturen. Exklusiv für Vereinsmitglieder.</p>
+                <p><strong>Preis:</strong> 80 CHF pro Stunde</p>
+                <p>Interessiert? Kontaktiere uns für Unterstützung!</p>
+            </div>
+        </div>
+
+        <!-- Angebot 4: Steuererklärungen ausfüllen -->
+        <div class="offer">
+            <img src="assets/steuer.png" alt="Steuererklärungen ausfüllen">
+            <div>
+                <h3>Steuererklärungen ausfüllen (Privatpersonen)</h3>
+                <p>Wir helfen dir, deine Steuererklärung schnell und korrekt auszufüllen – nur für Privatpersonen. Exklusiv für Vereinsmitglieder.</p>
+                <p><strong>Preis:</strong> 100 CHF pro Steuererklärung</p>
+                <p>Interessiert? Kontaktiere uns für einen Termin!</p>
+            </div>
+        </div>
+
+        <!-- Vereinslokal (Beizli) -->
+        <h2 id="beizli">Unser Vereinslokal – Kaffee & Kuchen</h2>
+        <div class="beizli">
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Vereinslokal Beizli">
+            <div>
+                <h3>Öffentliches Beizli</h3>
+                <p>Besuche unser gemütliches Vereinslokal! Wir bieten Kaffee, Kuchen und kleine Snacks – für Mitglieder und die Öffentlichkeit. Komm vorbei und genieße eine entspannte Atmosphäre.</p>
+                <p><strong>Öffnungszeiten:</strong>Zur Zeit geschlossen</p>
+
+            </div>
+        </div>
+    </div>
+
+    <footer id="kontakt">
+        <p>Kontakt: Verein für ganzheitliche Lebensunst , Oberdorfstr. 5 , verein.glkunst@gmail.com, 0792201727</p>
+        <p><a href="#" style="color: white;">Impressum</a></p>
+    </footer>
+</body>
+</html>
